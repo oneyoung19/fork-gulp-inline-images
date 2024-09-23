@@ -47,17 +47,17 @@ function plugin(options = {}){
 
 				// Find !inline attribute
 				var not_inline_flag = $img.attr(NOT_INLINE_ATTR);
-				
+
 				if(typeof not_inline_flag !== typeof undefined && not_inline_flag !== false){
 					// Remove the tag and don't process this file
 					return $img.removeAttr(NOT_INLINE_ATTR);
 				}
-				
+
 				// Count async ops
 				count++;
 
 				getSrcBase64(options.basedir || file.dirname, getHTTP, src, function(err, result, res_format, skip_formatting){
-					if (err) { 
+					if (err) {
 						console.error(err);
 					} else {
 						// Need a format in and a result for this to work
@@ -69,7 +69,7 @@ function plugin(options = {}){
 							}
 						}
 
-						if(!--count){
+						if(!(count - 1)){
 							file.contents = Buffer.from($.html());
 							callback(null, file);
 						}
@@ -78,7 +78,8 @@ function plugin(options = {}){
 			});
 
 			// If no files are processing we don't need to wait as none were ever started
-			if (!img_tags.length){
+			// !img_tags.length no matched files, count <= 0 no processed files.
+			if (!img_tags.length || count <= 0){
 				file.contents = Buffer.from($.html());
 				callback(null, file);
 			}
@@ -133,7 +134,7 @@ function getSrcBase64(base, getHTTP, src, callback){
 		} else {
 			callback(null, src, null, true)
 		}
-	}    
+	}
 }
 
 module.exports.plugin = plugin;
