@@ -69,7 +69,7 @@ function plugin(options = {}){
 							}
 						}
 
-						if(!(count - 1)){
+						if(!--count){
 							file.contents = Buffer.from($.html());
 							callback(null, file);
 						}
